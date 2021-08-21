@@ -8,9 +8,14 @@ class UserSerializer(serializers.ModelSerializer):
     필요한거 : email, password, nickname
     """
     email = serializers.EmailField(
-
+        help_text="회원 고유 번호",
     )
-
+    password = serializers.CharField(
+        help_text="비밀번호(수정)"
+    )
+    nickname = serializers.CharField(
+        help_text="닉네임"
+    )
 
     class Meta:
         model = User

@@ -1,5 +1,22 @@
 from django.db import models
 from product.models import Product
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+
+
+class UserManager(BaseUserManager):
+    # 일반 user 생성
+    def create_user(self, email, nickname, password=None):
+        if not email:
+            raise ValueError('must have user email')
+        if not nickname:
+            raise ValueError('must have user nickname')
+        user = self.model(
+            email=self.normalize_email(email),
+            nickname=nickname,
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 
 class Gender(models.Model):
@@ -20,7 +37,7 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     gender_id = models.ForeignKey(Gender, on_delete=models.CASCADE, null=True)
     birth_date = models.DateField(auto_now=False, null=True)
-    profile_image = models.URLField(max_length=256,null=True,default="https://image.ohou.se/i/bucketplace-v2-development/uploads/default_images/avatar.png?gif=1&amp;w=640&amp;h=640&amp;c=c&amp;webp=1")
+    profile_image = models.URLField(max_length=256, null=True, default="https://image.ohou.se/i/bucketplace-v2-development/uploads/default_images/avatar.png?gif=1&amp;w=640&amp;h=640&amp;c=c&amp;webp=1")
     note = models.CharField(max_length=50, null=True)
 
     class Meta:
