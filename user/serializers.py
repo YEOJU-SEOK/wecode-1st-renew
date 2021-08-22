@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from user.models import Gender, User, History
+from django.contrib.auth import get_user_model
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -7,16 +8,18 @@ class UserSerializer(serializers.ModelSerializer):
     회원 기본 정보 Serializer
     필요한거 : email, password, nickname
     """
-    email = serializers.EmailField(
-        help_text="회원 고유 번호",
-    )
-    password = serializers.CharField(
-        help_text="비밀번호(수정)"
-    )
-    nickname = serializers.CharField(
-        help_text="닉네임"
-    )
+    # DB 에 회원정보를 등록하기 위해 create 함수를 오버라이딩
+    # validated_data 인수는 무결성 검사를 통과한 data 를 갖고 있음
+    def create(self, validated_data):
+        user = User.objects.create(
+            email=validated_data['email'],
+            nickname=validated_data['nickname'],
+        )
+        # password 의 경우, set_password 함수를 호출하여 암호화된 값을 DB에 저장
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = ["email", "password", "nickname"]

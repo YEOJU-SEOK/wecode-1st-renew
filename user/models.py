@@ -18,6 +18,18 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    # 관리자 user 생성
+    def create_superuser(self, email, nickname, name, password=None):
+        user = self.create_user(
+            email,
+            password=password,
+            nickname=nickname,
+            name=name
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
 
 class Gender(models.Model):
     name = models.CharField(max_length=1, null=True)
@@ -26,12 +38,12 @@ class Gender(models.Model):
         db_table = 'genders'
 
 
-class User(models.Model):
+class User(AbstractBaseUser):
     member_seq = models.AutoField(
         primary_key=True, help_text="회원 고유 키"
     )
     email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)
+    #password = models.CharField(max_length=100)
     nickname = models.CharField(max_length=15, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,6 +51,10 @@ class User(models.Model):
     birth_date = models.DateField(auto_now=False, null=True)
     profile_image = models.URLField(max_length=256, null=True, default="https://image.ohou.se/i/bucketplace-v2-development/uploads/default_images/avatar.png?gif=1&amp;w=640&amp;h=640&amp;c=c&amp;webp=1")
     note = models.CharField(max_length=50, null=True)
+
+    # django 기본의 User Model 은 username 을 pk 로 사용하므로 이를 account 로 변경
+    USERNAME_FIELD = 'member_seq'
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = 'users'

@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     #'django.contrib.admin',
-    #'django.contrib.auth',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
-    #'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -150,3 +150,17 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
+"""프로젝트 전체에서 인증받은 요청만 처리하도록 권한을 환경설정 파일에 지정한다
+※ 인증이 필요없는 요청에 대해서는 개별 설정을 할 것"""
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
+
+AUTH_USER_MODEL = 'user.User'
