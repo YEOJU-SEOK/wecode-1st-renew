@@ -7,31 +7,22 @@ from .models import User
 from my_settings import SECRET, ALGORITHM
 
 from django.shortcuts import render
-from .serializers import SignUpSerializer
+from .serializers import SignUpSerializer, SignInSerializer
 from rest_framework import generics
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 
 from django.contrib.auth import get_user_model
 
+from django.core import cache
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.decorators import permission_classes, authentication_classes
 
-class Signin(View):
+# JWT 사용을 위해 필요
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 
-    def post(self, request):
-        data = json.loads(request.body)
-        try:
-            if User.objects.all().filter(email=data['email']).exists():
-                if bcrypt.checkpw(data['password'].encode('utf-8'),User.objects.get(email=data['email']).password.encode('utf-8')):
-                    access_token = jwt.encode({'id':User.objects.get(email=data['email']).id}, SECRET, ALGORITHM).decode('utf-8')
-                    image = User.objects.get(email=data['email']).profile_image
-                    name = User.objects.get(email=data['email']).nickname
-                    return JsonResponse({"message":"SUCCESS", "TOKEN":access_token, "IMAGE":image, "NAME":name}, status=200)
-
-                return JsonResponse({"message":"INVALID_PW"},status=401)
-            return JsonResponse({"message":"INVALID_EMAIL"},status=401)
-        except KeyError:
-            return JsonResponse({"message":"KEY_ERROR"},status=403)
-        except ValueError:
-            return JsonResponse({"message":"INVALID_USER"},status=404)
+from .models import *
 
 
 #회원가입
@@ -39,3 +30,10 @@ class SingUpViewSet(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = SignUpSerializer
     permission_classes = [AllowAny, ]
+
+
+class SignInViewSet(generics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = SignInSerializer
+    permission_classes = [AllowAny, ]
+
