@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 # User model 을 가져옴
 User = get_user_model()
 
-class UserSerializer(serializers.ModelSerializer):
+
+class SignUpSerializer(serializers.ModelSerializer):
     """
     회원 기본 정보 Serializer
     필요한거 : email, password, nickname
