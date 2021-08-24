@@ -13,13 +13,14 @@ JWT_PAYLOAD_HANDLER = api_settings.JWT_PAYLOAD_HANDLER
 JWT_ENCODE_HANDLER = api_settings.JWT_ENCODE_HANDLER
 
 
-class SignUpSerializer(serializers.ModelSerializer):
+class SignUpSerializer(serializers.Serializer):
     """
     회원 기본 정보 Serializer
     필요한거 : email, password, nickname
     """
-
+    email = serializers.CharField(max_length=100)
     password = serializers.CharField(write_only=True)
+    nickname = serializers.CharField(max_length=15)
 
     # DB 에 회원정보를 등록하기 위해 create 함수를 오버라이딩
     # validated_data 인수는 무결성 검사를 통과한 data 를 갖고 있음
@@ -33,24 +34,25 @@ class SignUpSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-    class Meta:
-        model = User
-        fields = ["email", "password", "nickname"]
+    # class Meta:
+    #     model = User
+    #     fields = ["email", "password", "nickname"]
 
 
-class SignInSerializer(serializers.ModelSerializer):
-    email = serializers.CharField(max_length=100)
+class SignInSerializer(serializers.Serializer):
+    member_seq = serializers.IntegerField()
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-        email = data.get("email")
+        print("data", data)
+        member_seq = data.get("member_seq")
         password = data.get("password", None)
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(member_seq=member_seq, password=password)
 
         if user is None:
-            return {"member_seq": "None", "email": email}
+            return {"email": "None"}
         try:
             payload = JWT_PAYLOAD_HANDLER(user) #payload생성
             jwt_token = JWT_ENCODE_HANDLER(payload) #jwt token 생성
@@ -69,6 +71,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id',)
+        fields = ('member_seq',)
 
 

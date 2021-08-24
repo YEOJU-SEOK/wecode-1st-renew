@@ -45,7 +45,7 @@ class User(AbstractBaseUser):
         primary_key=True, help_text="회원 고유 키"
     )
     email = models.EmailField(max_length=100, unique=True)
-    password = models.CharField(max_length=100)
+   #password = models.CharField(max_length=100)
     nickname = models.CharField(max_length=15, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
