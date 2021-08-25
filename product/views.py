@@ -1,15 +1,9 @@
 import json
 from django.views import View
 from django.http import JsonResponse
-from menu.models import Category, SubCategory
-from product.models import (
-    Package,
-    Product,
-    OptionSize,
-    OptionColor,
-    Option,
-    ProductImage
-)
+from menu.models import Category
+from product.models import Product
+
 
 class ProductListView(View):
      def get(self, request):
