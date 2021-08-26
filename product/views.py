@@ -3,28 +3,30 @@ from django.views import View
 from django.http import JsonResponse
 from menu.models import Category
 from product.models import Product
+from product.serializers import ProductListSerializer
 
 
-class ProductListView(View):
-     def get(self, request):
-        sub_category_id  = request.GET.get("sub", None)
-        products = Product.objects.prefetch_related(
-            'productimage_set',
-            'option_set').select_related(
-            'sub_category').filter(
-            sub_category_id=sub_category_id)
-        context = [{
-            'id'           : product.package.id,
-            'alt'          : product.package.name,
-            'product_image': [image.url for image in product.productimage_set.all()],
-            'articleName'  : product.package.name,
-            'brandName'    : product.brand.name,
-            'ispackage'    : "true",
-            'itemBadge'    : product.sale.name,
-            'options'      : [{'color':option.option_color.name,'price':int(option.price)
-                            } for option in product.option_set.all()]
-        }for product in products]
-        return JsonResponse({"productlist": context}, status=200)
+class ProductListAPIView()
+# class ProductListView(View):
+#      def get(self, request):
+#         sub_category_id  = request.GET.get("sub", None)
+#         products = Product.objects.prefetch_related(
+#             'productimage_set',
+#             'option_set').select_related(
+#             'sub_category').filter(
+#             sub_category_id=sub_category_id)
+#         context = [{
+#             'id'           : product.package.id,
+#             'alt'          : product.package.name,
+#             'product_image': [image.url for image in product.productimage_set.all()],
+#             'articleName'  : product.package.name,
+#             'brandName'    : product.brand.name,
+#             'ispackage'    : "true",
+#             'itemBadge'    : product.sale.name,
+#             'options'      : [{'color':option.option_color.name,'price':int(option.price)
+#                             } for option in product.option_set.all()]
+#         }for product in products]
+#         return JsonResponse({"productlist": context}, status=200)
 
 class ProductDetailView(View):
     def get(self, request, package_id):
