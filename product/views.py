@@ -1,12 +1,19 @@
 import json
 from django.views import View
 from django.http import JsonResponse
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from menu.models import Category
 from product.models import Product
 from product.serializers import ProductListSerializer
 
 
-class ProductListAPIView()
+class ProductListAPIView(ListAPIView):
+    """
+    제품 리스트 호출 api
+    """
+    permission_classes = [AllowAny,]
+    queryset = Product.objects.filter
 # class ProductListView(View):
 #      def get(self, request):
 #         sub_category_id  = request.GET.get("sub", None)
