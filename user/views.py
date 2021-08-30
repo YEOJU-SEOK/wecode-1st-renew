@@ -33,10 +33,11 @@ class SingUpViewSet(generics.CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
+
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         return Response({
-            "user": UserSerializer(user, context=self.get_serializer_context()).data,
+            #"user": request.data.email,
             "message": "계정이 성공적으로 생성되었습니다. 로그인해주세요",
         })
 
