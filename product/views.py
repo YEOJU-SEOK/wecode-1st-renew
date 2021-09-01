@@ -22,10 +22,11 @@ class ProductListAPIView(ListAPIView):
         select_related('sub_category')
     serializer_class = ProductListSerializer
 
-    def get(self, request, sub, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """제품 리스트 카테고리별 정렬"""
-
-        queryset = self.get_queryset.filter(sub_category_id=sub)
+        sub = request.GET.get("sub", None)
+        queryset = self.get_queryset()
+        queryset = queryset.filter(sub_category_id=sub)
         serializer = self.get_serializer(queryset, many=True)
 
         res = {
