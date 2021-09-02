@@ -60,7 +60,7 @@ class ProductDetailAPIView(ListAPIView):
         }
 
         return Response(res, status=status.HTTP_200_OK)
-    3
+
 # class ProductDetailView(View):
 #     def get(self, request, package_id):
 #         try:

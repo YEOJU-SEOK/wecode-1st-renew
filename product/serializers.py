@@ -51,17 +51,67 @@ class ProductListSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ProductDetailSerializer(serializers.Serializer):
+class ProductDetailSerializer(serializers.ModelSerializer):
     """
     특정 제품의 상세정보 serializer
     """
     id = serializers.IntegerField(
         help_text="제품 고유번호"
     )
-    alt = serializers.CharField(
+    product_name = serializers.CharField(
         source="name",
         help_text="제품명",
     )
     product_image = serializers.SerializerMethodField(
         help_text="제품 이미지",
     )
+    brand_name = serializers.CharField(
+        source="brand.name",
+        help_text="브랜드 명",
+    )
+    article_name = serializers.CharField(
+        source="package.name",
+        help_text="항목명",
+    )
+    brand_name = serializers.CharField(
+        source="brand.name",
+        help_text="브랜드 명",
+    )
+    item_badge = serializers.CharField(
+        source="sale.name",
+        help_text="제품 세일주제"
+    )
+    alt = serializers.CharField(
+        source="name",
+        help_text="제품명",
+    )
+    sub_category = serializers.CharField(
+        source="sub_category.name",
+        help_text="카테고리명",
+    )
+
+    options = serializers.SerializerMethodField(
+        help_text="옵션종류",
+    )
+
+    def get_options(self, obj):
+        try:
+            options = Option.objects.filter(product=obj.products)
+
+            res = {res}
+            return options
+        except AttributeError:
+            return ""
+
+
+
+                    # 'options'      : [{'color_id':option.option_color.id,
+                    #                    'option_id':option.id,
+                    #                    'color':option.option_color.name,
+                    #                    'price':int(option.price)
+                    #                 } for option in product.option_set.all()]
+    #                 'ispackage'    : "true",
+    #                 'itemBadge'    : product.sale.name,
+    #                 'infoImage'    : product.information_image,
+    #                 'category'     : Category.objects.get(id=1).name
+    #             }for product in products]
