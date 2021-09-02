@@ -49,3 +49,19 @@ class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+
+class ProductDetailSerializer(serializers.Serializer):
+    """
+    특정 제품의 상세정보 serializer
+    """
+    id = serializers.IntegerField(
+        help_text="제품 고유번호"
+    )
+    alt = serializers.CharField(
+        source="name",
+        help_text="제품명",
+    )
+    product_image = serializers.SerializerMethodField(
+        help_text="제품 이미지",
+    )
