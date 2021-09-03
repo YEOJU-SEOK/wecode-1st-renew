@@ -35,14 +35,14 @@ class ProductListSerializer(serializers.ModelSerializer):
 
     def get_options(self, obj):
         try:
-            options = Option.objects.filter(product=obj.products)
+            options = obj.option_set.values()
             return options
         except AttributeError:
             return ""
 
     def get_product_image(self, obj):
         try:
-            product_image = ProductImage.objects.filter(product=obj.products)
+            product_image = obj.productimage_set.values('url')
             return product_image
 
         except AttributeError:
@@ -113,22 +113,15 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     def get_options(self, obj):
         try:
-            options = Option.objects.filter(product=obj.products)
+            options = obj.option_set.values()
+            return options
+        except AttributeError:
+            return ""
 
-            res = {}
-
-            if options.exist():
-                res["color_id"] = options.option_color.id
-                res["option_id"] = options.id
-                res["color"] = options.option_color.name
-                res["price"] = options.price
-                return res
-            else:
-                res["color_id"] = None
-                res["option_id"] = None
-                res["color"] = None
-                res["price"] = None
-                return res
+    def get_product_image(self, obj):
+        try:
+            product_image = obj.productimage_set.values('url')
+            return product_image
 
         except AttributeError:
             return ""

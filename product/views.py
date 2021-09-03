@@ -58,6 +58,7 @@ class ProductDetailAPIView(ListAPIView):
         queryset = self.get_queryset()
         queryset = queryset.filter(package_id=package_id)
 
+
         serializer = self.get_serializer(queryset, many=True)
 
         res = {
