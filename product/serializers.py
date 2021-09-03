@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from menu.models import Category
 from product.models import Product, Option, ProductImage
 
 
@@ -43,6 +44,7 @@ class ProductListSerializer(serializers.ModelSerializer):
         try:
             product_image = ProductImage.objects.filter(product=obj.products)
             return product_image
+
         except AttributeError:
             return ""
 
@@ -89,29 +91,60 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         source="sub_category.name",
         help_text="카테고리명",
     )
-
     options = serializers.SerializerMethodField(
         help_text="옵션종류",
+    )
+
+    is_package = serializers.SerializerMethodField(
+        help_text="묶음여부"
+
+    )
+    item_badge = serializers.CharField(
+        source="sale.name",
+        help_text="제품 세일주제"
+    )
+    info_image = serializers.CharField(
+        source="information_image",
+        help_text="제품 세일주제"
+    )
+    category = serializers.SerializerMethodField(
+        help_text="카테고리명",
     )
 
     def get_options(self, obj):
         try:
             options = Option.objects.filter(product=obj.products)
 
-            res = {res}
-            return options
+            res = {}
+
+            if options.exist():
+                res["color_id"] = options.option_color.id
+                res["option_id"] = options.id
+                res["color"] = options.option_color.name
+                res["price"] = options.price
+                return res
+            else:
+                res["color_id"] = None
+                res["option_id"] = None
+                res["color"] = None
+                res["price"] = None
+                return res
+
         except AttributeError:
             return ""
 
+    def get_is_package(self, obj):
+        return True
 
+    def get_category(self, obj):
+        try:
+            category = Category.objects.get(id=1).name
 
-                    # 'options'      : [{'color_id':option.option_color.id,
-                    #                    'option_id':option.id,
-                    #                    'color':option.option_color.name,
-                    #                    'price':int(option.price)
-                    #                 } for option in product.option_set.all()]
-    #                 'ispackage'    : "true",
-    #                 'itemBadge'    : product.sale.name,
-    #                 'infoImage'    : product.information_image,
-    #                 'category'     : Category.objects.get(id=1).name
-    #             }for product in products]
+            return category
+
+        except AttributeError:
+            return ""
+
+    class Meta:
+        model = Product
+        fields = "__all__"

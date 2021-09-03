@@ -16,11 +16,14 @@ class ProductListAPIView(ListAPIView):
     제품 리스트 호출 api
     """
     permission_classes = [AllowAny, ]
-    queryset = Product.objects.\
-        prefetch_related('productimage_set').\
-        prefetch_related('option_set').\
-        select_related('sub_category')
     serializer_class = ProductListSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects.\
+            prefetch_related('productimage_set').\
+            prefetch_related('option_set').\
+            select_related('sub_category')
+        return queryset
 
     def get(self, request, *args, **kwargs):
         """제품 리스트 카테고리별 정렬"""
@@ -42,11 +45,14 @@ class ProductDetailAPIView(ListAPIView):
     특정 제품의 상세정보 호출 API
     """
     permission_classes = [AllowAny, ]
-    get_queryset = Product.objects.\
-        prefetch_related('productimage_set').\
-        prefetch_related('option_set').\
-        select_related('sub_category')
     serializer_class = ProductDetailSerializer
+
+    def get_queryset(self):
+        queryset = Product.objects. \
+            select_related('sub_category').\
+            prefetch_related('option_set').\
+            prefetch_related('productimage_set')
+        return queryset
 
     def get(self, request, package_id, *args, **kwargs):
         queryset = self.get_queryset()
