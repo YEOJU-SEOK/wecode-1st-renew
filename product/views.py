@@ -58,7 +58,6 @@ class ProductDetailAPIView(ListAPIView):
         queryset = self.get_queryset()
         queryset = queryset.filter(package_id=package_id)
 
-
         serializer = self.get_serializer(queryset, many=True)
 
         res = {
@@ -67,33 +66,3 @@ class ProductDetailAPIView(ListAPIView):
         }
 
         return Response(res, status=status.HTTP_200_OK)
-
-# class ProductDetailView(View):
-#     def get(self, request, package_id):
-#         try:
-#             products = Product.objects.prefetch_related(
-#             'productimage_set',
-#             'option_set').select_related(
-#             'sub_category').filter(
-#             package_id=package_id)
-#             context = [{
-#                 'id'           : product.id,
-#                 'productName'  : product.name,
-#                 'product_image': [image.url for image in product.productimage_set.all()],
-#                 'brandName'    : product.brand.name,
-#                 'articleName'  : product.package.name,
-#                 'alt'          : product.package.name,
-#                 'sub_category' : product.sub_category.name,
-#                 'options'      : [{'color_id':option.option_color.id,'option_id':option.id,'color':option.option_color.name,'price':int(option.price)
-#                                 } for option in product.option_set.all()],
-#                 'ispackage'    : "true",
-#                 'itemBadge'    : product.sale.name,
-#                 'infoImage'    : product.information_image,
-#                 'category'     : Category.objects.get(id=1).name
-#             }for product in products]
-#             return JsonResponse({'productdetail' :context}, status=200)
-#         except Product.DoesNotExist:
-#              return JsonResponse({'MESSAGE':'NO_PRODUCT'}, status=404)
-#         except ValueError:
-#             return JsonResponse({'message':'VALUE_ERROR'}, status=400)
-#

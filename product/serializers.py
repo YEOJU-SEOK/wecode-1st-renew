@@ -99,13 +99,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         help_text="묶음여부"
 
     )
-    item_badge = serializers.CharField(
-        source="sale.name",
-        help_text="제품 세일주제"
-    )
     info_image = serializers.CharField(
         source="information_image",
-        help_text="제품 세일주제"
+        help_text="제품상세정보"
     )
     category = serializers.SerializerMethodField(
         help_text="카테고리명",
