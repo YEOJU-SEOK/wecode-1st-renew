@@ -2,10 +2,10 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
-from user.models import Gender, User, History
+from user.models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
-from django.db import IntegrityError
+
 
 # User model 을 가져옴
 User = get_user_model()
@@ -48,31 +48,31 @@ class SignUpSerializer(serializers.Serializer):
 
 
 class SignInSerializer(serializers.Serializer):
-    member_seq = serializers.IntegerField()
+    email = serializers.CharField(max_length=100)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
 
     def validate(self, data):
-        member_seq = data.get("member_seq")
+        email = data.get("email", None)
         password = data.get("password", None)
-
-        user = authenticate(member_seq=member_seq, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is None:
-            return {"email": "None"}
+            return {
+                'email': 'None'
+            }
         try:
-            payload = JWT_PAYLOAD_HANDLER(user) #payload생성
-            jwt_token = JWT_ENCODE_HANDLER(payload) #jwt token 생성
+            payload = JWT_PAYLOAD_HANDLER(user)
+            jwt_token = JWT_ENCODE_HANDLER(payload)
 
         except User.DoesNotExist:
-            raise serializers.ValidationError("이메일 혹은 비밀번호가 존재하지 않습니다")
-
-        res = {
-            "member_seq": user.member_seq,
-            "token": jwt_token
+            raise serializers.ValidationError(
+                'User with given email and password does not exists'
+            )
+        return {
+            'email': user.email,
+            'token': jwt_token
         }
-
-        return Response(res, status=status.HTTP_200_OK)
 
 
 # 사용자 정보 추출
@@ -80,6 +80,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'nickname',)
+        fields = ('email',)
 
 

@@ -1,12 +1,7 @@
-import json
-from django.views import View
-from django.http import JsonResponse
-
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from menu.models import Category
 from product.models import Product
 from product.serializers import ProductListSerializer, ProductDetailSerializer
 

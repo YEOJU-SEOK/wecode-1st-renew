@@ -41,9 +41,6 @@ class Gender(models.Model):
 
 class User(AbstractBaseUser):
     objects = UserManager()
-    member_seq = models.AutoField(
-        primary_key=True, help_text="회원 고유 키"
-    )
     email = models.EmailField(max_length=100, unique=True)
    #password = models.CharField(max_length=100)
     nickname = models.CharField(max_length=15, unique=True)
@@ -55,7 +52,7 @@ class User(AbstractBaseUser):
     note = models.CharField(max_length=50, null=True)
 
    # django 기본의 User Model 은 username 을 pk 로 사용하므로 이를 account 로 변경
-    USERNAME_FIELD = 'member_seq'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
     class Meta:

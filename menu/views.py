@@ -1,28 +1,26 @@
-import json
+from rest_framework import status
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
-from django.views import View
-from django.http import JsonResponse
+from menu.models import Category
+from menu.serializers import CategorySerializer
 
-from menu.models import Category, SubCategory
 
-class CategoryView(View):
-    def get(self, request):
+class CategoryAPiView(ListAPIView):
+    """
+    카테고리 리스트 호출 APIView
+    """
+    permission_classes = [AllowAny, ]
+    serializer_class = CategorySerializer
 
-        categories = Category.objects.prefetch_related('subcategory_set').all()
+    def get(self, request, *args, **kwarg):
+        queryset = Category.objects.prefetch_related('subcategory_set').all()
+        serializer = self.serializer_class(queryset, many=True)
 
-        categories = [{ 
-            'categoryId'   : category.id,
-            'category'     : category.name,
-            'subCategories': [
-                sub_category.name
-                for sub_category in category.subcategory_set.all()]
-            } for category in categories]
-        
-        return JsonResponse({"categories" : categories}, status=200)
-        
-       
-         
-         
+        res = {
+            "RESP_DATA": serializer.data,
+            "RESP_MESSAGE": "성공"
+        }
 
-  
-    
+        return Response(res, status=status.HTTP_200_OK)

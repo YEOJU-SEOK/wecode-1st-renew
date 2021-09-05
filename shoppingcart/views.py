@@ -1,13 +1,33 @@
-import json, re, bcrypt, jwt
+import json
+
+from rest_framework import status
+from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from django.views import View
 from django.http import JsonResponse
 
 from .models import Cart
 from user.models import User
-from product.models import Product, OptionSize, OptionColor, Option
-from user.utils  import login_decorator
-from my_settings import SECRET, ALGORITHM
+from product.models import Product, OptionColor, Option
+from user.utils import login_decorator
+
+from .serializers import ShoppingCartSerializer
+
+
+#generic작성후 viewset으로 전체 구현해보기..
+class ShoppingCartAPIView(CreateAPIView, ListAPIView):
+    """
+    장바구니 등록 & 항목 호출 API
+    """
+    permission_classes = [IsAuthenticated]
+    serializer_class = ShoppingCartSerializer
+    #post만해서 그냥 갯수 변경하는경우? 에러뜰까 그냥 create될까? -> post작성다 한뒤에 한번 테스트해보기!
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data, many=True)
+
 
 class CartView(View):
     #장바구니 등록
